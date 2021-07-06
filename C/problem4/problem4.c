@@ -25,6 +25,7 @@ struct problem {
 struct solution {
     struct problem *prob;
     int n;
+    int *data;
     int objvalue;
     int number_of_groups;
 };
@@ -40,7 +41,7 @@ struct problem *newProblem(int n) {
     if (n > 0) {
         p = (struct problem *) malloc(sizeof (struct problem));
         p->number_of_nodes = n;
-        p->edge_list = (struct edge *) malloc(n*(n+1)/2 * sizeof(struct edge));
+        p->edge_list = (struct edge *) malloc((n+1)*(n/2) * sizeof(struct edge));
         init_table(p->edge_list, n);
     } else
         fprintf(stderr, "problem4: Invalid number of nodes: %d\n", n);
