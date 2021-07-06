@@ -23,7 +23,7 @@
 
 
 /* Problem instantiation and inspection */
-struct problem *newProblem(const char *filename);
+struct problem *newProblem(int n);
 
 int getNumObjectives(const struct problem *p);
 
