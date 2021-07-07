@@ -13,6 +13,8 @@ struct problem {
 struct solution {
     struct problem *prob;
     int *data;
+    int **groups;
+    int *groupsizes;
     int n;
     int objvalue;
 };
@@ -87,9 +89,11 @@ int getNumObjectives(const struct problem *p) {
  */
 struct solution *allocSolution(struct problem *p) {
     int n = p->n;
-    struct solution *s = malloc(sizeof (struct solution));
+    struct solution *s = (struct solution *)malloc(sizeof (struct solution));
     s->prob = p;
-    s->data = malloc(n * sizeof (int));
+    s->data = (int *)malloc(n * sizeof (int));
+    s->groups = (int **)malloc(n * sizeof (int *));
+    s->groupsizes = (int *)malloc(n * sizeof(int));
     s->n = n;
     return s;
 }
@@ -119,6 +123,9 @@ void freeProblem(struct problem *p) {
  */
 void freeSolution(struct solution *s) {
     free(s->data);
+    // TODO free individual groups
+    free(s->groups);
+    free(s->groupsizes);
     free(s);
 }
 
@@ -155,6 +162,7 @@ struct solution *randomSolution(struct solution *s) {
     for(int i = 0; i < n; ++i) {
         s->data[i] = randint(n-1);
     }
+    // TODO assign vertices to groups
     return s;
 }
 
@@ -177,6 +185,7 @@ struct solution *copySolution(struct solution *dest, const struct solution *src)
     dest->prob = src->prob;
     dest->n = src->n;
     memcpy(dest->data, src->data, src->n * sizeof (int));
+    // TODO copy group data
     dest->objvalue = src->objvalue;
     return dest;
 }
@@ -190,6 +199,7 @@ struct solution *applyMove(struct solution *s, const struct move *v) {
     i = v->data[0];
     j = v->data[1];
     s->data[i] = j;
+    // TODO update groups
     return s;
 }
 
