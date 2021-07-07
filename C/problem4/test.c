@@ -3,7 +3,7 @@
 #include <time.h>
 #include <gsl/gsl_rng.h>
 #include "problem4.h"
-#include "shd.h"
+#include "ils.h"
 
 gsl_rng *rng;    /* The single rng instance used by the whole code */
 

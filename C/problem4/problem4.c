@@ -14,21 +14,21 @@ static int randint(int n_max) {
 
 
 struct problem {
-    double **edge_list;
+    double *edge_list;
     int number_of_nodes;
 };
 
 struct solution {
     struct problem *prob;
     int n;
-    int *data;
+    int *data; 
     int objvalue;
     int number_of_groups;
 };
 
 struct move {
     struct problem *prob;
-    int exchange_group[2];
+    int data[2];
 };
 
 
@@ -36,12 +36,12 @@ static int index_calc(int a, int b) {
     return a + 10*b;
 }
 
-static void init_matrix(double **edge_list, int number_of_nodes) {
+static void init_matrix(double *edge_list, int number_of_nodes) {
     int i, j;
     
     for(i = 0; i < number_of_nodes; ++i) {
         for(j = i+1; j < number_of_nodes; ++j) {
-            edge_list[i][j-1] = randint(i);
+            *(edge_list + i*(number_of_nodes-1-i) + j-i) = randint(i);
         }
     }
 }
@@ -53,15 +53,12 @@ struct problem *newProblem(int n) {
     if (n > 0) {
         p = (struct problem *) malloc(sizeof (struct problem));
         p->number_of_nodes = n;
-        p->edge_list = (double **) malloc(n * sizeof(double *)); // n rows, n-1-i columns, total size = ((n+1)*(n/2)-n)
-
-        for(i = 0; i < n; ++i) {
-            p->edge_list[i] = (double *) malloc((n-1-i) * sizeof(double));
-        }
+        p->edge_list = (double *) malloc(((n+1)*(n/2)-n) * sizeof(double)); //upper triangular matrix without diagonal
 
         init_matrix(p->edge_list, n);
     } else
         fprintf(stderr, "problem4: Invalid number of nodes: %d\n", n);
+        
     return p;
 }
 
@@ -71,10 +68,11 @@ int getNumObjectives(const struct problem *p) {
 
 void printProblem(struct problem *p) {
     int i, j;
+    double *list = p->edge_list;
 
     for(i = 0; i < p->number_of_nodes; ++i) {
         for(j = i+1; j < p->number_of_nodes; ++j) {
-            printf("(%d,%d) = %lf\n", i, j, p->edge_list[i][j-1]);
+            printf("(%d,%d) = %lf\n", i, j, *(list + i*(p->number_of_nodes-1-i) + j-i));
         }
     }
 }
@@ -82,12 +80,28 @@ void printProblem(struct problem *p) {
 void freeProblem(struct problem *p) {
     int i;
 
-    for(i = 0; i < p->number_of_nodes; ++i) {
-        free(p->edge_list[i]);
-    }
-
     free(p->edge_list);
     free(p);
+}
+
+struct move *randomMove(struct move *m, const struct solution *s) {
+    /* move v must have been allocated with allocMove() */
+    int n;
+
+    n = s->n;
+    m->data[0] = randint(n-1);
+    
+    do{
+        m->data[1] = randint(n-1);
+
+        if(m->data[0] != m->data[1]){
+            break;
+        }
+    }while(1);
+
+    printf("%d, %d", m->data[0], m->data[1]);
+
+    return m;
 }
 
 
@@ -139,10 +153,6 @@ int getNeighbourhoodSize(struct solution *s){
 }
 
 struct solution *resetRandomMoveWOR(struct solution *s){
-    return NULL;
-}
-
-struct move *randomMove(struct move *v, const struct solution *s){
     return NULL;
 }
 
