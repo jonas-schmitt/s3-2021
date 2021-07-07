@@ -60,7 +60,7 @@ static int randint(int n_max) {
 /* ----- Problem-specific instantiation ----- */
 /**********************************************/
 
-int get_idx(int i, int j, int n) {
+int index_calc(int i, int j, int n) {
     if (i > j) {
         int tmp = i;
         i = j;
@@ -73,6 +73,16 @@ int get_idx(int i, int j, int n) {
     index += j - i - 1;
     return index;
 }
+static void init_matrix(double *matrix, int number_of_nodes) {
+    int i, j;
+
+    for(i = 0; i < number_of_nodes; ++i) {
+        for(j = i+1; j < number_of_nodes; ++j) {
+            // TODO fix this to the generation of double values
+            matrix[index_calc(i, j, number_of_nodes)] = randint(i);
+        }
+    }
+}
 
 struct problem *newProblem(const char *filename) {
     struct problem *p = NULL;
@@ -83,6 +93,7 @@ struct problem *newProblem(const char *filename) {
         p->n = n;
         //TODO handle uneven numbers
         p->matrix = (double *)malloc((n * n / 2 - n) * sizeof(double));
+        init_matrix(p->matrix, n);
         //TODO initialize
     } else
         fprintf(stderr, "problem4: Invalid number of vertices: %d\n", n);
@@ -230,19 +241,38 @@ struct solution *applyMove(struct solution *s, const struct move *v) {
  * Notes:
  *   Move (i,j) such that i != j. Order is irrelevant and not enforced.
  */
+/* old code template
 static int is_valid_move(struct move *v, const struct solution *s) {
     //TODO
     return true;
 
 }
 struct move *randomMove(struct move *v, const struct solution *s) {
-    /* move v must have been allocated with allocMove() */
     int n = s->n;
     do {
         v->data[0] = randint(n-1);
         v->data[1] = randint(n-1);
     } while(!is_valid_move(v, s));
     return v;
+}*/
+struct move *randomMove(struct move *m, const struct solution *s) {
+    /* move v must have been allocated with allocMove() */
+    int n;
+
+    n = s->n;
+    m->data[0] = randint(n-1);
+
+    do{
+        m->data[1] = randint(n-1);
+
+        if(m->data[0] != m->data[1]){
+            break;
+        }
+    }while(1);
+
+    printf("%d, %d", m->data[0], m->data[1]);
+
+    return m;
 }
 
 struct move *randomMoveWOR(struct move *v, struct solution *s) {
