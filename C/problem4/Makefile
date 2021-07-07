@@ -19,15 +19,16 @@
 IDIR = ../include
 SDIR = ../solver
 CC = gcc
-OPT = -O3
-CFLAGS = -I$(IDIR)
-PDEPS = $(IDIR)/problem.h
+OPT = -O3 -g
+CFLAGS = -I$(IDIR) -Wall
+PDEPS = $(IDIR)/s3include.h
 SDEPS = $(IDIR)/solver.h
 LIBS = -lgsl -lgslcblas -lm
 
 .PHONY: all clean debug
 
-all: test
+# all: problem4-shd problem4-sga problem4-ils
+all: problem4-shd
 
 clean:
 	rm -f *.o *~ core
@@ -38,18 +39,18 @@ debug:
 problem4-shd: problem4-shd.o problem4.o
 	$(CC) -o $@ $(CFLAGS) $(OPT) $^ $(SDIR)/shd.o $(LIBS)
 
-test: test.o problem4.o
-	$(CC) -o $@ $(CFLAGS) $(OPT) $^ $(SDIR)/ils.o $(LIBS)
+# problem4-sga: problem4-sga.o problem4.o
+# 	$(CC) -o $@ $(CFLAGS) $(OPT) $^ $(SDIR)/sga.o $(LIBS)
 
-problem4-sga: problem4-sga.o problem4.o
-	$(CC) -o $@ $(CFLAGS) $(OPT) $^ $(SDIR)/sga.o $(LIBS)
+# problem4-ils: problem4-ils.o problem4.o
+# 	$(CC) -o $@ $(CFLAGS) $(OPT) $^ $(SDIR)/ils.o $(LIBS)
 
 %.o: %.c
 	$(CC) -c -o $@ $(CFLAGS) $(OPT) $<
 
-problem4.o: problem4.c problem4.h $(PDEPS)
+problem4.o: problem4.c $(PDEPS)
 problem4-shd.o: problem4-shd.c $(PDEPS) $(IDIR)/shd.h $(SDEPS)
-problem4-sga.o: problem4-sga.c $(PDEPS) $(IDIR)/sga.h $(SDEPS)
-problem4-ils.o: problem4-ils.c $(PDEPS) $(IDIR)/ils.h $(SDEPS)
+# problem4-sga.o: problem4-sga.c $(PDEPS) $(IDIR)/sga.h $(SDEPS)
+# problem4-ils.o: problem4-ils.c $(PDEPS) $(IDIR)/ils.h $(SDEPS)
 
-test.o: test.c problem4.h $(PDEPS) $(IDIR)/ils.h $(SDEPS)
+

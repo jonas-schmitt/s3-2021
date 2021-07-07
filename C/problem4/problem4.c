@@ -1,29 +1,23 @@
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "problem.h"
-#include "problem4.h"
-
-
-#include <gsl/gsl_rng.h>
-extern gsl_rng *rng;    /* The single rng instance used by the whole code */
-
-static int randint(int n_max) {
-    return gsl_rng_uniform_int(rng, n_max+1);
-}
-
+#include <stdbool.h>
+#include "s3include.h"
 
 struct problem {
-    double *edge_list;
-    int number_of_nodes;
+    double *matrix;
+    int n;
 };
 
 struct solution {
     struct problem *prob;
+    int *data;
+    int **groups;
+    int *group_sizes;
+    int *group_capacities;
     int n;
-    int *data; 
     int objvalue;
-    int number_of_groups;
 };
 
 struct move {
@@ -32,33 +26,77 @@ struct move {
 };
 
 
-static int index_calc(int i, int j, int n) {
-    return i*(n-1-i) + j-i;
-}
 
-static void init_matrix(double *edge_list, int number_of_nodes) {
+/**********************************/
+/* ----- Utility functions ----- */
+/**********************************/
+
+#if 0
+/*
+ * Random integer x such that 0 <= x <= n_max
+ * Status: FINAL
+ */
+static int randint(int n_max) {
+    int x;
+    if (n_max < 1)
+        return 0;
+    div_t y = div(-RAND_MAX-1, -n_max-1);
+    do
+        x = random();
+    while (x > RAND_MAX + y.rem);
+    return x / y.quot;
+}
+#else
+#include <gsl/gsl_rng.h>
+extern gsl_rng *rng;    /* The single rng instance used by the whole code */
+
+static int randint(int n_max) {
+    return gsl_rng_uniform_int(rng, n_max+1);
+}
+#endif
+
+
+/**********************************************/
+/* ----- Problem-specific instantiation ----- */
+/**********************************************/
+
+int index_calc(int i, int j, int n) {
+    if (i > j) {
+        int tmp = i;
+        i = j;
+        j = tmp;
+    }
+    int index = 0;
+    for(int k = 1; i < i+1; ++i) {
+        index += n - k;
+    }
+    index += j - i - 1;
+    return index;
+}
+static void init_matrix(double *matrix, int number_of_nodes) {
     int i, j;
-    
+
     for(i = 0; i < number_of_nodes; ++i) {
         for(j = i+1; j < number_of_nodes; ++j) {
-            *(edge_list + index_calc(i,j, number_of_nodes)) = randint(i);
+            // TODO fix this to the generation of double values
+            matrix[index_calc(i, j, number_of_nodes)] = randint(i);
         }
     }
 }
 
-struct problem *newProblem(int n) {
+struct problem *newProblem(const char *filename) {
     struct problem *p = NULL;
-    int i;
-
+    //TODO get number of vertices
+    int n = 0;
     if (n > 0) {
         p = (struct problem *) malloc(sizeof (struct problem));
-        p->number_of_nodes = n;
-        p->edge_list = (double *) malloc(((n+1)*(n/2)-n) * sizeof(double)); //upper triangular matrix without diagonal
-
-        init_matrix(p->edge_list, n);
+        p->n = n;
+        //TODO handle uneven numbers
+        p->matrix = (double *)malloc((n * n / 2 - n) * sizeof(double));
+        init_matrix(p->matrix, n);
+        //TODO initialize
     } else
-        fprintf(stderr, "problem4: Invalid number of nodes: %d\n", n);
-        
+        fprintf(stderr, "problem4: Invalid number of vertices: %d\n", n);
     return p;
 }
 
@@ -66,31 +104,164 @@ int getNumObjectives(const struct problem *p) {
     return 1;
 }
 
-void printProblem(struct problem *p) {
-    int i, j;
-    double *list = p->edge_list;
+/*****************************/
+/* ----- API functions ----- */
+/*****************************/
 
-    for(i = 0; i < p->number_of_nodes; ++i) {
-        for(j = i+1; j < p->number_of_nodes; ++j) {
-            printf("(%d,%d) = %lf\n", i, j, *(list + index_calc(i,j,p->number_of_nodes)));
-        }
-    }
+/* Memory management */
+
+/*
+ * Allocate memory for a solution
+ * Status: CHECK
+ */
+struct solution *allocSolution(struct problem *p) {
+    int n = p->n;
+    struct solution *s = (struct solution *)malloc(sizeof (struct solution));
+    s->prob = p;
+    s->data = (int *)malloc(n * sizeof (int));
+    s->groups = (int **)malloc(n * sizeof (int *));
+    // TODO alloc memory for groups
+    s->group_sizes = (int *)malloc(n * sizeof(int));
+    s->group_capacities = (int *)malloc(n * sizeof(int));
+    s->n = n;
+    return s;
 }
 
-void freeProblem(struct problem *p) {
-    int i;
+/*
+ * Allocate memory for a move
+ * Status: FINAL
+ */
+struct move *allocMove(struct problem *p) {
+    struct move *v = malloc(sizeof (struct move));
+    v->prob = p;
+    return v;
+}
 
-    free(p->edge_list);
+/*
+ * Free the memory used by a problem
+ * Status: FINAL
+ */
+void freeProblem(struct problem *p) {
+    free(p->matrix);
     free(p);
 }
 
+/*
+ * Free the memory used by a solution
+ * Status: FINAL
+ */
+void freeSolution(struct solution *s) {
+    free(s->data);
+    // TODO free individual groups
+    free(s->groups);
+    free(s->group_sizes);
+    free(s->group_capacities);
+    free(s);
+}
+
+/*
+ * Free the memory used by a move
+ * Status: FINAL
+ */
+void freeMove(struct move *v) {
+    free(v);
+}
+
+/* I/O  */
+void printProblem(struct problem *p) {
+    //TODO
+}
+
+void printSolution(struct solution *s) {
+    //TODO
+}
+
+void printMove(struct move *v) {
+    printf("%d-member community detection move: %d, %d\n", v->prob->n, v->data[0], v->data[1]);
+}
+
+/* Solution generation */
+
+/*
+ * Generate solutions uniformly at random
+ * Status: CHECK
+ */
+struct solution *randomSolution(struct solution *s) {
+    /* solution s must have been allocated with allocSolution() */
+    int n = s->n;
+    for(int i = 0; i < n; ++i) {
+        s->data[i] = randint(n-1);
+    }
+    // TODO assign vertices to groups
+    return s;
+}
+
+
+/* Solution inspection */
+
+/*
+ * Solution evaluation
+ * Status: INTERIM
+ * Notes:
+ *   Implements incremental evaluation for multiple moves
+ */
+double getObjectiveValue(struct solution *s) {
+    //TODO
+    return 0.0;
+}
+
+/* Operations on solutions*/
+struct solution *copySolution(struct solution *dest, const struct solution *src) {
+    dest->prob = src->prob;
+    dest->n = src->n;
+    memcpy(dest->data, src->data, src->n * sizeof (int));
+    // TODO copy group data
+    dest->objvalue = src->objvalue;
+    return dest;
+}
+
+/*
+ * Apply a move to a solution
+ * Status: FINAL
+ */
+struct solution *applyMove(struct solution *s, const struct move *v) {
+    int i, j;
+    i = v->data[0];
+    j = v->data[1];
+    s->data[i] = j;
+    // TODO update groups
+    return s;
+}
+
+/* Move generation */
+
+/*
+ * Generate moves uniformly at random
+ * Status: TENTATIVE, NEEDS_TESTING
+ * Notes:
+ *   Move (i,j) such that i != j. Order is irrelevant and not enforced.
+ */
+/* old code template
+static int is_valid_move(struct move *v, const struct solution *s) {
+    //TODO
+    return true;
+
+}
+struct move *randomMove(struct move *v, const struct solution *s) {
+    int n = s->n;
+    do {
+        v->data[0] = randint(n-1);
+        v->data[1] = randint(n-1);
+    } while(!is_valid_move(v, s));
+    return v;
+}*/
 struct move *randomMove(struct move *m, const struct solution *s) {
     /* move v must have been allocated with allocMove() */
     int n;
 
     n = s->n;
     m->data[0] = randint(n-1);
-    
+
     do{
         m->data[1] = randint(n-1);
 
@@ -104,75 +275,12 @@ struct move *randomMove(struct move *m, const struct solution *s) {
     return m;
 }
 
-struct move *copyMove(struct move *dest, const struct move *src){
-    memcpy(dest->prob, src->prob, sizeof(dest->prob));
-    memcpy(dest->data, src->data, sizeof(dest->data));
-
-    return dest;
-}
-
-
-/* TODO */
-
-struct solution *allocSolution(struct problem *p){
+struct move *randomMoveWOR(struct move *v, struct solution *s) {
+    //TODO
     return NULL;
 }
 
-struct move *allocMove(struct problem *p){
-    return NULL;
-}
-
-void freeSolution(struct solution *s){
-    return;
-}
-
-void freeMove(struct move *v){
-    return;
-}
-
-void printSolution(struct solution *s){
-    return;
-}
-
-void printMove(struct move *v){
-    return;
-}
-
-
-struct solution *randomSolution(struct solution *s){
-    return NULL;
-}
-
-struct solution *copySolution(struct solution *dest, const struct solution *src){
-    return NULL;
-}
-
-double *getObjectiveVector(double *objv, struct solution *s){
-    return NULL;
-}
-
-struct solution *applyMove(struct solution *s, const struct move *v){
-    return NULL;
-}
-
-int getNeighbourhoodSize(struct solution *s){
-    return 0;
-}
-
-struct solution *resetRandomMoveWOR(struct solution *s){
-    return NULL;
-}
-
-double *getObjectiveIncrement(double *obji, struct move *v, struct solution *s){
-    return NULL;
-}
-
-struct move *randomMoveWOR(struct move *v, struct solution *s){
-    return NULL;
-}
-
-
-/* Compiler says this is undefined, not sure if needed */
-struct solution *randomNeighbour(struct solution *s, int d){
+double *getObjectiveIncrement(double *obji, struct move *v, struct solution *s) {
+    //TODO
     return NULL;
 }
