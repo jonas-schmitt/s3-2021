@@ -117,6 +117,7 @@ void freeSolution(struct solution *s) {
     free(s->groups);
     free(s->group_sizes);
     free(s->group_capacities);
+    free(s->rndSample);
     free(s);
 }
 
@@ -153,6 +154,7 @@ void printProblem(struct problem *p) {
 
 void printSolution(struct solution *s) {
     int n = s->n;
+
     for(int i = 0; i < n; ++i) {
         printf("%i ", s->rndSample[i]);
     }
