@@ -19,8 +19,70 @@
 
 /* SIGEVO Summer School modifications to the nasf4nio API*/
 
-#include "problem.h"
+#include "s3include.h"
 
+/**********************************/
+/* ----- Utility functions ----- */
+/**********************************/
 
-/* Problem instantiation and inspection */
-struct problem *newProblem(int n);
+#ifndef PROBLEM4_H
+#define PROBLEM4_H
+
+#if 0
+/*
+ * Random integer x such that 0 <= x <= n_max
+ * Status: FINAL
+ */
+static int randint(int n_max) {
+    int x;
+    if (n_max < 1)
+        return 0;
+    div_t y = div(-RAND_MAX-1, -n_max-1);
+    do
+        x = random();
+    while (x > RAND_MAX + y.rem);
+    return x / y.quot;
+}
+#else
+#include <gsl/gsl_rng.h>
+extern gsl_rng *rng;    /* The single rng instance used by the whole code */
+
+static int randint(int n_max) {
+    return gsl_rng_uniform_int(rng, n_max+1);
+}
+#endif
+
+struct problem {
+    double *matrix;
+    int n;
+};
+
+struct solution {
+    struct problem *prob;
+    int *data;
+    int **groups;
+    int *group_sizes;
+    int *group_capacities;
+    int n;
+    int objvalue;
+};
+
+struct move {
+    struct problem *prob;
+    int data[2];
+};
+
+int index_calc(int i, int j, int n) {
+    if (i > j) {
+        int tmp = i;
+        i = j;
+        j = tmp;
+    }
+    int index = 0;
+    for(int k = 1; i < i+1; ++i) {
+        index += n - k;
+    }
+    index += j - i - 1;
+    return index;
+}
+#endif
