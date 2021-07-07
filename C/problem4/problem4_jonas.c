@@ -59,6 +59,8 @@ struct solution *allocSolution(struct problem *p) {
     s->group_sizes = (int *)malloc(n * sizeof(int));
     s->group_capacities = (int *)malloc(n * sizeof(int));
     s->n = n;
+    // TODO: alloc memory for rndSample and initialize with nodes
+    s->sampleLim = n-1;
     return s;
 }
 
