@@ -76,6 +76,7 @@ struct solution {
 struct move {
     struct problem *prob;
     int data[2];
+    double incrvalue;
 };
 
 int index_calc(int i, int j, int n) {
