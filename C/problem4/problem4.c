@@ -104,6 +104,13 @@ struct move *randomMove(struct move *m, const struct solution *s) {
     return m;
 }
 
+struct move *copyMove(struct move *dest, const struct move *src){
+    memcpy(dest->prob, src->prob, sizeof(dest->prob));
+    memcpy(dest->data, src->data, sizeof(dest->data));
+
+    return dest;
+}
+
 
 /* TODO */
 
@@ -153,10 +160,6 @@ int getNeighbourhoodSize(struct solution *s){
 }
 
 struct solution *resetRandomMoveWOR(struct solution *s){
-    return NULL;
-}
-
-struct move *copyMove(struct move *dest, const struct move *src){
     return NULL;
 }
 
