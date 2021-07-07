@@ -32,8 +32,8 @@ struct move {
 };
 
 
-static int index_calc(int a, int b) {
-    return a + 10*b;
+static int index_calc(int i, int j, int n) {
+    return i*(n-1-i) + j-i;
 }
 
 static void init_matrix(double *edge_list, int number_of_nodes) {
@@ -41,7 +41,7 @@ static void init_matrix(double *edge_list, int number_of_nodes) {
     
     for(i = 0; i < number_of_nodes; ++i) {
         for(j = i+1; j < number_of_nodes; ++j) {
-            *(edge_list + i*(number_of_nodes-1-i) + j-i) = randint(i);
+            *(edge_list + index_calc(i,j, number_of_nodes)) = randint(i);
         }
     }
 }
@@ -72,7 +72,7 @@ void printProblem(struct problem *p) {
 
     for(i = 0; i < p->number_of_nodes; ++i) {
         for(j = i+1; j < p->number_of_nodes; ++j) {
-            printf("(%d,%d) = %lf\n", i, j, *(list + i*(p->number_of_nodes-1-i) + j-i));
+            printf("(%d,%d) = %lf\n", i, j, *(list + index_calc(i,j,p->number_of_nodes)));
         }
     }
 }
