@@ -1,6 +1,7 @@
 //
 // Created by jonas on 07.07.2021.
 //
+#include <string.h>
 #include "problem4.h"
 
 /* Move generation */
@@ -53,4 +54,11 @@ struct move *randomMoveWOR(struct move *v, struct solution *s) {
 double *getObjectiveIncrement(double *obji, struct move *v, struct solution *s) {
     //TODO
     return NULL;
+}
+struct move *copyMove(struct move *dest, const struct move *src){
+    //TODO I think you just have to copy the pointer, but not the whole problem - Jonas
+    memcpy(dest->prob, src->prob, sizeof(dest->prob));
+    memcpy(dest->data, src->data, sizeof(dest->data));
+
+    return dest;
 }
