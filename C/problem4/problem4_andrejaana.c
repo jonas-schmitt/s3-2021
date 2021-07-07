@@ -28,9 +28,9 @@ struct solution *randomSolution(struct solution *s) {
  * Notes:
  *   Implements incremental evaluation for multiple moves
  */
-double getObjectiveValue(struct solution *s) {
+double *getObjectiveVector(double *objv, struct solution *s) {
     //TODO
-    return 0.0;
+    return NULL;
 }
 
 /* Operations on solutions*/

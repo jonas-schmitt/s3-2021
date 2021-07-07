@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <gsl/gsl_rng.h>
-#include "s3include.h"
+#include "s3problem.h"
 #include "ils.h"
 
 gsl_rng *rng;    /* The single rng instance used by the whole code */

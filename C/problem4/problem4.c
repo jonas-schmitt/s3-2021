@@ -1,4 +1,4 @@
-#include "s3include.h"
+#include "s3problem.h"
 #include "problem4.h"
 
 #include "problem4_jonas.c"

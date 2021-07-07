@@ -19,7 +19,6 @@
 
 /* SIGEVO Summer School modifications to the nasf4nio API*/
 
-#include "s3include.h"
 
 /**********************************/
 /* ----- Utility functions ----- */
@@ -27,6 +26,7 @@
 
 #ifndef PROBLEM4_H
 #define PROBLEM4_H
+#include "s3problem.h"
 
 #if 0
 /*
