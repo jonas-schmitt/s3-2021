@@ -154,11 +154,29 @@ void printProblem(struct problem *p) {
 
 void printSolution(struct solution *s) {
     int n = s->n;
-
+    printf("Node: \t");
+    for(int i = 0; i < n; ++i) {
+        printf("%i\t", i);
+    }
+    printf("\n");
+    printf("Group:\t");
+    for(int i = 0; i < n; ++i) {
+        printf("%i\t", s->data[i]);
+    }
+    printf("\n\n");
+    for(int i = 0; i < n; ++i) {
+        printf("Group %i: ", i);
+        for(int j = 0; j < s->group_sizes[i]; ++j) {
+            printf("%i ", s->groups[i][j]);
+        }
+        printf("\n");
+    }
+    /* Just for debugging
+    printf("\nRandom Sample:\n");
     for(int i = 0; i < n; ++i) {
         printf("%i ", s->rndSample[i]);
     }
-    printf("\n");
+    printf("\n");*/
     //TODO print the rest
 }
 
