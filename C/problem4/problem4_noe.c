@@ -84,6 +84,11 @@ struct move *randomMoveWOR(struct move *m, struct solution *s) {
     return m;
 }
 
+struct solution *resetRandomMoveWOR(struct solution *s){
+    s->sampleLim = s->n-1;
+    return s;
+}
+
 static double calc_weight(struct solution *s, int group1, int group2, int node1, int node2) {
     int j;
     double weight = 0.0;
