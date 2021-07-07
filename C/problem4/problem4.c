@@ -59,6 +59,20 @@ static int randint(int n_max) {
 /* ----- Problem-specific instantiation ----- */
 /**********************************************/
 
+int get_idx(int i, int j, int n) {
+    if (i > j) {
+        int tmp = i;
+        i = j;
+        j = tmp;
+    }
+    int index = 0;
+    for(int k = 1; i < i+1; ++i) {
+        index += n - k;
+    }
+    index += j - i - 1;
+    return index;
+}
+
 struct problem *newProblem(const char *filename) {
     struct problem *p = NULL;
     //TODO get number of vertices
