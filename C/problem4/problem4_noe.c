@@ -133,7 +133,7 @@ double *getObjectiveIncrement(double *obji, struct move *m, struct solution *s) 
     weight2 = calc_weight(s, group2, group1, i, j);
     
     // TO CHECK: only return this?
-    *obji = (double)(v->incrvalue = (weight2-weight1));
+    *obji = (double)(m->incrvalue = (weight2-weight1));
     return obji;
 }
 struct move *copyMove(struct move *dest, const struct move *src){
