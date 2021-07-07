@@ -24,7 +24,6 @@ struct move *randomMove(struct move *v, const struct solution *s) {
 }*/
 
 static int is_valid_move(struct move *m, const struct solution *s) {
-    //TODO
     if(m->data[0] == m->data[1]){
         return 0;
     }
@@ -32,7 +31,7 @@ static int is_valid_move(struct move *m, const struct solution *s) {
     int group1 = s->data[m->data[0]];
     int group2 = s->data[m->data[1]];
 
-    if(s->group_capacities[group1] <= 1 && s->group_capacities[group2] <= 1){
+    if(s->group_sizes[group1] <= 1 && s->group_sizes[group2] <= 1){
         return 0;
     }
 
