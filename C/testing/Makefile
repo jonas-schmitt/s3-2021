@@ -56,7 +56,7 @@ debug:
 # 
 test-$(PROBNAME): property_tests.o tests_main.c $(PROBPATH)$(PROBOBJ) $(PROBINIT)
 	echo "Build test for $(PROBNAME) with ID $(PROBID)"
-	$(CC) -o $@ $(CFLAGS) $(OPT) -I$(IDIR) -I$(PROBPATH) $(PDEPS) $(LIBS) $^ 
+	$(CC) -o $@ $(CFLAGS) $(OPT) -I$(IDIR) -I$(PROBPATH) $(PDEPS) $(LIBS) $^ $(LIBS)
 	#-DPROBID=$(PROBID) 
 	
 	
