@@ -27,7 +27,7 @@ LIBS = -lgsl -lgslcblas -lm
 
 .PHONY: all clean debug
 
-# all: problem4-shd problem4-sga problem4-ils
+# all: problem4-shd problem4-sga problem4-ils test
 all: problem4-shd test
 
 clean:
@@ -42,11 +42,8 @@ problem4-shd: problem4-shd.o problem4.o
 test: test.o problem4.o
 	$(CC) -o $@ $(CFLAGS) $(OPT) $^ $(SDIR)/shd.o $(LIBS)
 
-# problem4-sga: problem4-sga.o problem4.o
-# 	$(CC) -o $@ $(CFLAGS) $(OPT) $^ $(SDIR)/sga.o $(LIBS)
-
-# problem4-ils: problem4-ils.o problem4.o
-# 	$(CC) -o $@ $(CFLAGS) $(OPT) $^ $(SDIR)/ils.o $(LIBS)
+problem4-sga: problem4-sga.o problem4.o
+	$(CC) -o $@ $(CFLAGS) $(OPT) $^ $(SDIR)/sga.o $(LIBS)
 
 problem4-ils: problem4-ils.o problem4.o
 	$(CC) -o $@ $(CFLAGS) $(OPT) $^ $(SDIR)/ils.o $(LIBS)
@@ -54,10 +51,10 @@ problem4-ils: problem4-ils.o problem4.o
 %.o: %.c
 	$(CC) -c -o $@ $(CFLAGS) $(OPT) $<
 
-problem4.o: problem4.c $(PDEPS)
+problem4.o: problem4.c problem4_jonas.c problem4_andrejaana.c problem4_noe.c problem4_domagoj.c $(PDEPS)
 problem4-shd.o: problem4-shd.c $(PDEPS) $(IDIR)/shd.h $(SDEPS)
-# problem4-sga.o: problem4-sga.c $(PDEPS) $(IDIR)/sga.h $(SDEPS)
-# problem4-ils.o: problem4-ils.c $(PDEPS) $(IDIR)/ils.h $(SDEPS)
+problem4-sga.o: problem4-sga.c $(PDEPS) $(IDIR)/sga.h $(SDEPS)
+problem4-ils.o: problem4-ils.c $(PDEPS) $(IDIR)/ils.h $(SDEPS)
 test.o: test.c $(PDEPS) $(IDIR)/shd.h $(SDEPS)
 
 
