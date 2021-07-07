@@ -58,3 +58,8 @@ struct move *randomMove(struct move *v, const struct solution *s);
 struct move *copyMove(struct move *dest, const struct move *src);
 double *getObjectiveIncrement(double *obji, struct move *v, struct solution *s);
 struct move *randomMoveWOR(struct move *v, struct solution *s);
+
+
+
+/* Compiler says this is undefined, not sure if needed */
+struct solution *randomNeighbour(struct solution *s, int d);
