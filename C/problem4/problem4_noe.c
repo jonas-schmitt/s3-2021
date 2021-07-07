@@ -85,7 +85,7 @@ struct move *randomMoveWOR(struct move *m, struct solution *s) {
 }
 
 struct solution *resetRandomMoveWOR(struct solution *s){
-    s->sampleLim = s->n-1;
+    s->sampleLim = s->n - 1;
     return s;
 }
 
@@ -148,4 +148,20 @@ struct move *copyMove(struct move *dest, const struct move *src){
     dest->incrvalue = src->incrvalue;
 
     return dest;
+}
+
+int getNeighbourhoodSize(struct solution *s){
+    /* not sure if the neighbor is the number of nodes or number of groups */
+    
+    //return s->n;
+
+    int n_groups = 0;
+
+    for(int i = 0; i < s->n; ++i){
+        if(s->group_sizes[i] > 0){
+            ++n_groups;
+        }
+    }
+
+    return n_groups;
 }
