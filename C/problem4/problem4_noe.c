@@ -51,9 +51,9 @@ struct move *randomMove(struct move *m, const struct solution *s) {
 static void swap(int i, int sampleLim, int *rndSample){
     int temp;
 
-    temp = s->rndSample[i];
-    s->rndSample[temp] = s->rndSample[s->sampleLim];
-    s->rndSample[s->sampleLim] = temp;
+    temp = rndSample[i];
+    rndSample[temp] = rndSample[sampleLim];
+    rndSample[sampleLim] = temp;
 }
 
 struct move *randomMoveWOR(struct move *m, struct solution *s) {

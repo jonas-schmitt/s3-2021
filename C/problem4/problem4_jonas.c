@@ -7,6 +7,7 @@
 
 static void init_matrix(double *matrix, int number_of_nodes) {
     int i, j;
+    int min = -100, max = 100;
 
     for(i = 0; i < number_of_nodes; ++i) {
         for(j = i+1; j < number_of_nodes; ++j) {
@@ -15,7 +16,7 @@ static void init_matrix(double *matrix, int number_of_nodes) {
             // Print out linearized indices for testing
             //printf("(%i, %i): ", i,j);
             //printf("%i\n", index);
-            matrix[index_calc(i, j, number_of_nodes)] = randint(i);
+            matrix[index_calc(i, j, number_of_nodes)] = randdouble(min, max);
         }
     }
 }

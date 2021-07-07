@@ -50,6 +50,10 @@ extern gsl_rng *rng;    /* The single rng instance used by the whole code */
 static int randint(int n_max) {
     return gsl_rng_uniform_int(rng, n_max+1);
 }
+
+static double randdouble(int n_min, int n_max){
+    return gsl_rng_uniform(rng)*(n_max-n_min)+n_min;
+}
 #endif
 
 struct problem {
