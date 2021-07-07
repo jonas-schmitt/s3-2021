@@ -79,7 +79,7 @@ int index_calc(int i, int j, int n) {
         j = tmp;
     }
     int index = 0;
-    for(int k = 1; i < i+1; ++i) {
+    for(int k = 1; k < i+1; ++k) {
         index += n - k;
     }
     index += j - i - 1;

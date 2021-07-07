@@ -11,6 +11,8 @@ static void init_matrix(double *matrix, int number_of_nodes) {
     for(i = 0; i < number_of_nodes; ++i) {
         for(j = i+1; j < number_of_nodes; ++j) {
             // TODO fix this to the generation of double values
+            //int index = index_calc(i, j, number_of_nodes);
+            //printf("%i ", index);
             matrix[index_calc(i, j, number_of_nodes)] = randint(i);
         }
     }
