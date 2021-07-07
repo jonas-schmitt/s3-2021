@@ -14,7 +14,8 @@ struct solution {
     struct problem *prob;
     int *data;
     int **groups;
-    int *groupsizes;
+    int *group_sizes;
+    int *group_capacities;
     int n;
     int objvalue;
 };
@@ -80,6 +81,7 @@ struct problem *newProblem(const char *filename) {
     if (n > 0) {
         p = (struct problem *) malloc(sizeof (struct problem));
         p->n = n;
+        //TODO handle uneven numbers
         p->matrix = (double *)malloc((n * n / 2 - n) * sizeof(double));
         //TODO initialize
     } else
@@ -107,7 +109,9 @@ struct solution *allocSolution(struct problem *p) {
     s->prob = p;
     s->data = (int *)malloc(n * sizeof (int));
     s->groups = (int **)malloc(n * sizeof (int *));
-    s->groupsizes = (int *)malloc(n * sizeof(int));
+    // TODO alloc memory for groups
+    s->group_sizes = (int *)malloc(n * sizeof(int));
+    s->group_capacities = (int *)malloc(n * sizeof(int));
     s->n = n;
     return s;
 }
@@ -139,7 +143,8 @@ void freeSolution(struct solution *s) {
     free(s->data);
     // TODO free individual groups
     free(s->groups);
-    free(s->groupsizes);
+    free(s->group_sizes);
+    free(s->group_capacities);
     free(s);
 }
 
