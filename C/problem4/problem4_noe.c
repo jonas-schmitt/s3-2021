@@ -29,6 +29,13 @@ static int is_valid_move(struct move *m, const struct solution *s) {
         return 0;
     }
 
+    int group1 = s->data[m->data[0]];
+    int group2 = s->data[m->data[1]];
+
+    if(s->group_capacities[group1] <= 1 && s->group_capacities[group2] <= 1){
+        return 0;
+    }
+
     return 1;
 } 
 
@@ -78,8 +85,34 @@ struct move *randomMoveWOR(struct move *m, struct solution *s) {
     return m;
 }
 
+static double calc_weight(struct solution *s, int group1, int group2, int node1, int node2) {
+    int j;
+    double weight = 0.0;
+
+    for(j = 0; j < s->group_sizes[group1]; ++j) {
+        if(s->groups[group1][j] != node1 || s->groups[group1][j] != node2){
+            if(node1 < groups[group1][j])
+                weight += s->prob->matrix[index_calc(node1, groups[group1][j], s->prob->n)];
+            else
+                weight += s->prob->matrix[index_calc(groups[group1][j], node1, s->prob->n)];
+        }
+    }
+
+    for(j = 0; j < s->group_sizes[group2]; ++j) {
+        if(s->groups[group2][j] != node1 || s->groups[group2][j] != node2){
+            if(node2 < groups[group2][j])
+                weight += s->prob->matrix[index_calc(node2, groups[group2][j], s->prob->n)];
+            else
+                weight += s->prob->matrix[index_calc(groups[group2][j], node2, s->prob->n)];
+        }
+    }
+
+    return weight;
+}
+
 double *getObjectiveIncrement(double *obji, struct move *m, struct solution *s) {
-    int i,j;
+    int i,j,group1,group2;
+    double weight1, weight2;
 
     if (m->data[0] < m->data[1]) {   
         i = m->data[0];
@@ -88,8 +121,21 @@ double *getObjectiveIncrement(double *obji, struct move *m, struct solution *s) 
         i = m->data[1];
         j = m->data[0];
     }
+
+    group1 = s->data[i];
+    group2 = s->data[j];
+
+    /* 
+       first it is calculated the current weight value of both groups
+       next it is calculated the weight after the move occurs
+       the difference between both corresponds to the improvement/decrease of the obj function
+    */
+    weight1 = calc_weight(s, group1, group2, i, j);
+    weight2 = calc_weight(s, group2, group1, i, j);
     
-    return NULL;
+    // TO CHECK: only return this?
+    *obji = (double)(v->incrvalue = (weight2-weight1));
+    return obji;
 }
 struct move *copyMove(struct move *dest, const struct move *src){
     //TODO I think you just have to copy the pointer, but not the whole problem - Jonas
