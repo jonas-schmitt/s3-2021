@@ -21,18 +21,18 @@ all:
 	@$(MAKE) -C solver
 	@$(MAKE) -C nqueens
 #	@$(MAKE) -C problem3
-#	@$(MAKE) -C problem4
+	@$(MAKE) -C problem4
 
 clean:
 	@$(MAKE) -C solver clean
 	@$(MAKE) -C nqueens clean
 #	@$(MAKE) -C problem3 clean
-#	@$(MAKE) -C problem4 clean
+	@$(MAKE) -C problem4 clean
 	rm -f *~ core include/*~
 
 debug:
 	@$(MAKE) -C solver debug
 	@$(MAKE) -C nqueens debug
 #	@$(MAKE) -C problem3 debug
-#	@$(MAKE) -C problem4 debug
+	@$(MAKE) -C problem4 debug
 
