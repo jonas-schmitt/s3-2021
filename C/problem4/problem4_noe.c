@@ -87,22 +87,22 @@ struct move *randomMoveWOR(struct move *m, struct solution *s) {
 static double calc_weight(struct solution *s, int group1, int group2, int node1, int node2) {
     int j;
     double weight = 0.0;
-    int **groups = s->groups;
+
     for(j = 0; j < s->group_sizes[group1]; ++j) {
         if(s->groups[group1][j] != node1 || s->groups[group1][j] != node2){
-            if(node1 < groups[group1][j])
-                weight += s->prob->matrix[index_calc(node1, groups[group1][j], s->prob->n)];
+            if(node1 < s->groups[group1][j])
+                weight += s->prob->matrix[index_calc(node1, s->groups[group1][j], s->prob->n)];
             else
-                weight += s->prob->matrix[index_calc(groups[group1][j], node1, s->prob->n)];
+                weight += s->prob->matrix[index_calc(s->groups[group1][j], node1, s->prob->n)];
         }
     }
 
     for(j = 0; j < s->group_sizes[group2]; ++j) {
         if(s->groups[group2][j] != node1 || s->groups[group2][j] != node2){
-            if(node2 < groups[group2][j])
-                weight += s->prob->matrix[index_calc(node2, groups[group2][j], s->prob->n)];
+            if(node2 < s->groups[group2][j])
+                weight += s->prob->matrix[index_calc(node2, s->groups[group2][j], s->prob->n)];
             else
-                weight += s->prob->matrix[index_calc(groups[group2][j], node2, s->prob->n)];
+                weight += s->prob->matrix[index_calc(s->groups[group2][j], node2, s->prob->n)];
         }
     }
 
@@ -137,9 +137,10 @@ double *getObjectiveIncrement(double *obji, struct move *m, struct solution *s) 
     return obji;
 }
 struct move *copyMove(struct move *dest, const struct move *src){
-    //TODO I think you just have to copy the pointer, but not the whole problem - Jonas
-    memcpy(dest->prob, src->prob, sizeof(dest->prob));
-    memcpy(dest->data, src->data, sizeof(dest->data));
+    dest->prob = src->prob;
+    dest->data[0] = src->data[0];
+    dest->data[1] = src->data[1];
+    dest->incrvalue = src->incrvalue;
 
     return dest;
 }
