@@ -73,7 +73,7 @@ struct move {
 };
 
 int index_calc(int i, int j, int n) {
-    /*if (i > j) {
+    if (i > j) {
         int tmp = i;
         i = j;
         j = tmp;
@@ -83,7 +83,7 @@ int index_calc(int i, int j, int n) {
         index += n - k;
     }
     index += j - i - 1;
-    return index;*/
-    return i*(n-1-i) + j-i;
+    //return i*(n-1-i) + j-i;
+    return index;
 }
 #endif

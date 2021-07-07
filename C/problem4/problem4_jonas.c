@@ -11,8 +11,10 @@ static void init_matrix(double *matrix, int number_of_nodes) {
     for(i = 0; i < number_of_nodes; ++i) {
         for(j = i+1; j < number_of_nodes; ++j) {
             // TODO fix this to the generation of double values
-            //int index = index_calc(i, j, number_of_nodes);
-            //printf("%i ", index);
+            int index = index_calc(i, j, number_of_nodes);
+            // Print out linearized indices for testing
+            //printf("(%i, %i): ", i,j);
+            //printf("%i\n", index);
             matrix[index_calc(i, j, number_of_nodes)] = randint(i);
         }
     }
@@ -25,7 +27,8 @@ struct problem *newProblem(int n) {
     if (n > 0) {
         p = (struct problem *) malloc(sizeof (struct problem));
         p->n = n;
-        p->matrix = (double *)malloc(((n+1)*(n/2)-n) * sizeof(double));
+        int matrix_size = n*(n-1)/2;
+        p->matrix = (double *)malloc(matrix_size* sizeof(double));
         init_matrix(p->matrix, n);
     } else
         fprintf(stderr, "problem4: Invalid number of vertices: %d\n", n);

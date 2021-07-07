@@ -51,7 +51,7 @@ test: test.o problem4.o
 %.o: %.c
 	$(CC) -c -o $@ $(CFLAGS) $(OPT) $<
 
-problem4.o: problem4.c $(PDEPS)
+problem4.o: problem4.c problem4.h $(PDEPS)
 problem4-shd.o: problem4-shd.c $(PDEPS) $(IDIR)/shd.h $(SDEPS)
 # problem4-sga.o: problem4-sga.c $(PDEPS) $(IDIR)/sga.h $(SDEPS)
 # problem4-ils.o: problem4-ils.c $(PDEPS) $(IDIR)/ils.h $(SDEPS)
