@@ -13,11 +13,7 @@
  *   Move (i,j) such that i != j. Order is irrelevant and not enforced.
  */
 /* old code template
-static int is_valid_move(struct move *v, const struct solution *s) {
-    //TODO
-    return true;
 
-}
 struct move *randomMove(struct move *v, const struct solution *s) {
     int n = s->n;
     do {
@@ -26,6 +22,16 @@ struct move *randomMove(struct move *v, const struct solution *s) {
     } while(!is_valid_move(v, s));
     return v;
 }*/
+
+static int is_valid_move(struct move *m, const struct solution *s) {
+    //TODO
+    if(m->data[0] == m->data[1]){
+        return 0;
+    }
+
+    return 1;
+} 
+
 struct move *randomMove(struct move *m, const struct solution *s) {
     /* move v must have been allocated with allocMove() */
     int n;
@@ -35,24 +41,54 @@ struct move *randomMove(struct move *m, const struct solution *s) {
 
     do{
         m->data[1] = randint(n-1);
-
-        if(m->data[0] != m->data[1]){
-            break;
-        }
-    }while(1);
+    }while(!is_valid_move(m, s));
 
     printf("%d, %d", m->data[0], m->data[1]);
 
     return m;
 }
 
-struct move *randomMoveWOR(struct move *v, struct solution *s) {
-    //TODO
-    return NULL;
+static void swap(int i, int sampleLim, int *rndSample){
+    int temp;
+
+    temp = s->rndSample[i];
+    s->rndSample[temp] = s->rndSample[s->sampleLim];
+    s->rndSample[s->sampleLim] = temp;
 }
 
-double *getObjectiveIncrement(double *obji, struct move *v, struct solution *s) {
-    //TODO
+struct move *randomMoveWOR(struct move *m, struct solution *s) {
+    int r;
+
+    if(s->sampleLim <= 1) 
+        return NULL;
+
+    r = randint(--s->sampleLim);
+    m->data[0] = s->rndSample[r];
+    swap(r, s->sampleLim, s->rndSample);
+
+    --s->sampleLim;
+    
+    do{
+        r = randint(s->sampleLim);
+        m->data[1] = s->rndSample[r];
+    }while(!is_valid_move(m,s));
+
+    swap(r, s->sampleLim, s->rndSample);
+    
+    return m;
+}
+
+double *getObjectiveIncrement(double *obji, struct move *m, struct solution *s) {
+    int i,j;
+
+    if (m->data[0] < m->data[1]) {   
+        i = m->data[0];
+        j = m->data[1];
+    } else {
+        i = m->data[1];
+        j = m->data[0];
+    }
+    
     return NULL;
 }
 struct move *copyMove(struct move *dest, const struct move *src){
