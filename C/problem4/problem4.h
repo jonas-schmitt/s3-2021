@@ -65,6 +65,8 @@ struct solution {
     int *group_capacities;
     int n;
     int objvalue;
+    int *rndSample;
+    int sampleLim;
 };
 
 struct move {
