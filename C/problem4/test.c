@@ -30,9 +30,13 @@ int main(int argc, char **argv) {
         printProblem(p);
 
         /* Clean up */
-        freeProblem(p);
     }
-
+    struct solution *s = allocSolution(p);
+    if (s != NULL) {
+        printSolution(s);
+    }
+    freeProblem(p);
+    freeSolution(s);
     gsl_rng_free(rng);
     return 0;
 }

@@ -87,7 +87,7 @@ struct move *randomMoveWOR(struct move *m, struct solution *s) {
 static double calc_weight(struct solution *s, int group1, int group2, int node1, int node2) {
     int j;
     double weight = 0.0;
-
+    int **groups = s->groups;
     for(j = 0; j < s->group_sizes[group1]; ++j) {
         if(s->groups[group1][j] != node1 || s->groups[group1][j] != node2){
             if(node1 < groups[group1][j])

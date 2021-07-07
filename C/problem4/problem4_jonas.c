@@ -12,8 +12,8 @@ static void init_matrix(double *matrix, int number_of_nodes) {
     for(i = 0; i < number_of_nodes; ++i) {
         for(j = i+1; j < number_of_nodes; ++j) {
             // TODO fix this to the generation of double values
-            int index = index_calc(i, j, number_of_nodes);
             // Print out linearized indices for testing
+            // int index = index_calc(i, j, number_of_nodes);
             //printf("(%i, %i): ", i,j);
             //printf("%i\n", index);
             matrix[index_calc(i, j, number_of_nodes)] = randdouble(min, max);
@@ -29,7 +29,7 @@ struct problem *newProblem(int n) {
         p = (struct problem *) malloc(sizeof (struct problem));
         p->n = n;
         int matrix_size = n*(n-1)/2;
-        p->matrix = (double *)malloc(matrix_size* sizeof(double));
+        p->matrix = (double *)malloc(matrix_size * sizeof(double));
         init_matrix(p->matrix, n);
     } else
         fprintf(stderr, "problem4: Invalid number of vertices: %d\n", n);
@@ -53,15 +53,35 @@ int getNumObjectives(const struct problem *p) {
 struct solution *allocSolution(struct problem *p) {
     int n = p->n;
     struct solution *s = (struct solution *)malloc(sizeof (struct solution));
+    s->n = n;
     s->prob = p;
     s->data = (int *)malloc(n * sizeof (int));
     s->groups = (int **)malloc(n * sizeof (int *));
-    // TODO alloc memory for groups
     s->group_sizes = (int *)malloc(n * sizeof(int));
     s->group_capacities = (int *)malloc(n * sizeof(int));
-    s->n = n;
+    // TODO alloc memory for groups
+    // TODO choose a smaller initial capacity
+    int initial_capacity = n;
+    // int initial_capacity = n / 2;
+    for(int i = 0; i < n; ++i) {
+        // Start simple
+        int * ptr = (int *)malloc(initial_capacity*sizeof(int));
+        s->groups[i] = ptr;
+        s->group_sizes[i] = 0;
+        s->group_capacities[i] = n;
+    }
     // TODO: alloc memory for rndSample and initialize with nodes
     s->sampleLim = n-1;
+    s->rndSample = (int *)malloc(n * sizeof(int));
+    for(int i = 0; i < n; ++i) {
+        s->rndSample[i] = i;
+    }
+    for(int i = n - 1; i > 0; --i) {
+        int j = randint(i);
+        int tmp = s->rndSample[j];
+        s->rndSample[j] = s->rndSample[i];
+        s->rndSample[i] = tmp;
+    }
     return s;
 }
 
@@ -89,8 +109,11 @@ void freeProblem(struct problem *p) {
  * Status: FINAL
  */
 void freeSolution(struct solution *s) {
+    int n = s->n;
     free(s->data);
-    // TODO free individual groups
+    for(int i = 0; i < n; ++i) {
+        free(s->groups[i]);
+    }
     free(s->groups);
     free(s->group_sizes);
     free(s->group_capacities);
@@ -107,11 +130,34 @@ void freeMove(struct move *v) {
 
 /* I/O  */
 void printProblem(struct problem *p) {
-    //TODO
+    int n = p->n;
+    printf("  \t");
+    for(int i = 0; i < n; ++i) {
+        printf( "%i\t", i);
+    }
+    printf("\n");
+    for(int i = 0; i < n; ++i) {
+        printf("%i|\t", i);
+        for(int j = 0; j < n; ++j) {
+            //TODO for now cast to int for better readability
+            if (j > i) {
+                printf("%i\t", (int)(p->matrix[index_calc(i, j, n)]));
+            }
+            else {
+                printf(" \t");
+            }
+        }
+        printf("\n");
+    }
 }
 
 void printSolution(struct solution *s) {
-    //TODO
+    int n = s->n;
+    for(int i = 0; i < n; ++i) {
+        printf("%i ", s->rndSample[i]);
+    }
+    printf("\n");
+    //TODO print the rest
 }
 
 void printMove(struct move *v) {
