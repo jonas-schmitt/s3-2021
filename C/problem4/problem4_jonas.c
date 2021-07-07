@@ -11,22 +11,22 @@ static void init_matrix(double *matrix, int number_of_nodes) {
     for(i = 0; i < number_of_nodes; ++i) {
         for(j = i+1; j < number_of_nodes; ++j) {
             // TODO fix this to the generation of double values
+            //int index = index_calc(i, j, number_of_nodes);
+            //printf("%i ", index);
             matrix[index_calc(i, j, number_of_nodes)] = randint(i);
         }
     }
 }
 
-struct problem *newProblem(const char *filename) {
+//struct problem *newProblem(const char *filename) {
+struct problem *newProblem(int n) {
     struct problem *p = NULL;
     //TODO get number of vertices
-    int n = 0;
     if (n > 0) {
         p = (struct problem *) malloc(sizeof (struct problem));
         p->n = n;
-        //TODO handle uneven numbers
         p->matrix = (double *)malloc(((n+1)*(n/2)-n) * sizeof(double));
         init_matrix(p->matrix, n);
-        //TODO initialize
     } else
         fprintf(stderr, "problem4: Invalid number of vertices: %d\n", n);
     return p;
