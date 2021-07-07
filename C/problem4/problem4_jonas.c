@@ -24,7 +24,7 @@ struct problem *newProblem(const char *filename) {
         p = (struct problem *) malloc(sizeof (struct problem));
         p->n = n;
         //TODO handle uneven numbers
-        p->matrix = (double *)malloc(((n+1)*(n/2)-n));
+        p->matrix = (double *)malloc(((n+1)*(n/2)-n) * sizeof(double));
         init_matrix(p->matrix, n);
         //TODO initialize
     } else
