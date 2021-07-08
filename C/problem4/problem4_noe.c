@@ -88,49 +88,15 @@ struct solution *resetRandomMoveWOR(struct solution *s){
     return s;
 }
 
-static double calc_weight(struct solution *s, int group1, int group2, int node) {
-    int i,j;
-    double weight = 0.0;
-    int index;
-
-    for(i = 0; i < s->group_sizes[group1]; ++i){
-        for(j = i+1; j < s->group_sizes[group1]; ++j) {
-            if(s->groups[group1][i] < s->groups[group1][j])
-                index = index_calc(s->groups[group1][i], s->groups[group1][j], s->prob->n);
-            else
-                index = index_calc(s->groups[group1][j], s->groups[group1][i], s->prob->n);
-
-            weight += s->prob->matrix[index];
-        }
-    }
-
-    for(i = 0; i < s->group_sizes[group2]; ++i){
-        for(j = i+1; j < s->group_sizes[group2]; ++j) {
-            if(s->groups[group2][i] != node){
-                if(s->groups[group2][i] < s->groups[group2][j])
-                    index = index_calc(s->groups[group2][i], s->groups[group2][j], s->prob->n);
-                else
-                    index = index_calc(s->groups[group2][j], s->groups[group2][i], s->prob->n);
-                
-                weight += s->prob->matrix[index];
-            }
-        }
-    }
-
-    return weight;
-}
-
 static double node_diff_group(struct solution *s, int group, int node){
     int j, index;
     double weight = 0.0;
 
     for(j = 0; j < s->group_sizes[group]; ++j) {
-        if(node < s->groups[group][j])
+        if(s->groups[group][j] != node){
             index = index_calc(node, s->groups[group][j], s->prob->n);
-        else
-            index = index_calc(s->groups[group][j], node, s->prob->n);
-
-        weight += s->prob->matrix[index];
+            weight += s->prob->matrix[index];
+        }
     }
 
     return weight;
@@ -148,11 +114,10 @@ double *getObjectiveIncrement(double *obji, struct move *m, struct solution *s) 
        next it is calculated the weight after the move occurs
        the difference between both corresponds to the improvement/decrease of the obj function
     */
-    weight1 = calc_weight(s, group1, group2, m->data[0]);
-    weight2 = calc_weight(s, group2, group1, m->data[0]);
-    weight2 += node_diff_group(s, group2, m->data[0]);
+    weight1 = node_diff_group(s, group1, m->data[0]);
+    weight2 = node_diff_group(s, group2, m->data[0]);
     
-    *obji = (double)(m->incrvalue = -(weight2-weight1));
+    *obji = (double)(m->incrvalue = (weight1-weight2));
     return obji;
 }
 struct move *copyMove(struct move *dest, const struct move *src){
