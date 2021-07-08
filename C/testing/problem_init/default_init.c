@@ -33,7 +33,7 @@ struct problem * initProblem(int argc, char ** argv){
 
     int n = atoi(argv[argc-1]);
 //     fprintf(stdout, "size: %d\n", n);
-    p = newProblem(n);
+    p = newProblem(argv[1]);
     
     return p;
 }
