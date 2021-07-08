@@ -63,6 +63,9 @@ struct solution *copySolution(struct solution *dest, const struct solution *src)
     dest->n = src->n;
     memcpy(dest->data, src->data, src->n * sizeof (int));
     for(int i = 0; i < src->n; ++i) {
+        // TODO technically this is not correct, since the capacities could differ
+        // TODO However, with the current implementation, the capacity is always n
+        // TODO But: Copy only src->group_sizes[i] integers
         memcpy(dest->groups[i], src->groups[i], src->group_capacities[i] * sizeof (int));
         dest->group_sizes[i] = src->group_sizes[i];
         dest->group_capacities[i] = src->group_capacities[i];
