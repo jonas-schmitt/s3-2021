@@ -127,6 +127,7 @@ void freeSolution(struct solution *s) {
     free(s->group_sizes);
     free(s->group_capacities);
     free(s->rndSample);
+    free(s->rndSampleGroup);
     free(s);
 }
 
