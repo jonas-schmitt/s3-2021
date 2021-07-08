@@ -35,13 +35,18 @@ struct solution *randomSolution(struct solution *s) {
  *   Implements incremental evaluation for multiple moves
  */
 double getObjectiveValue(struct solution *s) {
-    int n = s->n;
+    int n = s->n, index;
     s->objvalue = 0.0;
     for(int i = 0; i < n; ++i) {
         double groupObjVal = 0;
         for(int j = 0; j < s->group_sizes[i]; ++j) {
             for(int k = j+1; k < s->group_sizes[i]; ++k) {
-                groupObjVal += s->prob->matrix[index_calc(i, j, n)];
+                if(s->groups[i][j] < s->groups[i][k])
+                    index = index_calc(s->groups[i][j], s->groups[i][k], s->prob->n);
+                else
+                    index = index_calc(s->groups[i][k], s->groups[i][j], s->prob->n);
+                
+                groupObjVal += s->prob->matrix[index];
             }
         }
         s->objvalue += groupObjVal;
