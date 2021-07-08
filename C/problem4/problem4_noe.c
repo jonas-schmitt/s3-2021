@@ -25,9 +25,13 @@ struct move *randomMove(struct move *v, const struct solution *s) {
 
 static int is_valid_move(struct move *m, const struct solution *s) {
     int group = s->data[m->data[0]];
-    int new_group = s->data[m->data[1]];
+    int new_group = m->data[1];
 
     if(s->group_sizes[group] <= 1 && s->group_sizes[new_group] <= 1){
+        return 0;
+    }
+    
+    if(group == new_group){
         return 0;
     }
 
@@ -43,7 +47,7 @@ struct move *randomMove(struct move *m, const struct solution *s) {
     do{
         m->data[0] = randint(n-1);
         m->data[1] = randint(n-1);
-    }while(!is_valid_move(m, s));
+    }while(is_valid_move(m, s) == 0);
 
     return m;
 }
@@ -71,7 +75,7 @@ struct move *randomMoveWOR(struct move *m, struct solution *s) {
 
         r2 = randint(s->sampleLimGroup);
         m->data[1] = s->rndSampleGroup[r2];
-    }while(!is_valid_move(m,s));
+    }while(is_valid_move(m,s) == 0);
 
     swap(r1, s->sampleLim, s->rndSample);
     swap(r2, s->sampleLimGroup, s->rndSampleGroup);
@@ -84,31 +88,49 @@ struct solution *resetRandomMoveWOR(struct solution *s){
     return s;
 }
 
-static double calc_weight(struct solution *s, int group1, int group2, int node1) {
-    int j;
+static double calc_weight(struct solution *s, int group1, int group2, int node) {
+    int i,j;
     double weight = 0.0;
-    int index = 0;
+    int index;
 
-    for(j = 0; j < s->group_sizes[group1]; ++j) {
-        if(s->groups[group1][j] != node1){
-            if(node1 < s->groups[group1][j])
-                index = index_calc(node1, s->groups[group1][j], s->prob->n);
+    for(i = 0; i < s->group_sizes[group1]; ++i){
+        for(j = i+1; j < s->group_sizes[group1]; ++j) {
+            if(s->groups[group1][i] < s->groups[group1][j])
+                index = index_calc(s->groups[group1][i], s->groups[group1][j], s->prob->n);
             else
-                index = index_calc(s->groups[group1][j], node1, s->prob->n);
+                index = index_calc(s->groups[group1][j], s->groups[group1][i], s->prob->n);
 
             weight += s->prob->matrix[index];
         }
     }
 
-    for(j = 0; j < s->group_sizes[group2]; ++j) {
-        if(s->groups[group2][j] != node1){
-            if(node1 < s->groups[group2][j])
-                index = index_calc(node1, s->groups[group2][j], s->prob->n);
-            else
-                index = index_calc(s->groups[group2][j], node1, s->prob->n);
-            
-            weight += s->prob->matrix[index];
+    for(i = 0; i < s->group_sizes[group2]; ++i){
+        for(j = i+1; j < s->group_sizes[group2]; ++j) {
+            if(s->groups[group2][i] != node){
+                if(s->groups[group2][i] < s->groups[group2][j])
+                    index = index_calc(s->groups[group2][i], s->groups[group2][j], s->prob->n);
+                else
+                    index = index_calc(s->groups[group2][j], s->groups[group2][i], s->prob->n);
+                
+                weight += s->prob->matrix[index];
+            }
         }
+    }
+
+    return weight;
+}
+
+static double node_diff_group(struct solution *s, int group, int node){
+    int j, index;
+    double weight = 0.0;
+
+    for(j = 0; j < s->group_sizes[group]; ++j) {
+        if(node < s->groups[group][j])
+            index = index_calc(node, s->groups[group][j], s->prob->n);
+        else
+            index = index_calc(s->groups[group][j], node, s->prob->n);
+
+        weight += s->prob->matrix[index];
     }
 
     return weight;
@@ -128,9 +150,9 @@ double *getObjectiveIncrement(double *obji, struct move *m, struct solution *s) 
     */
     weight1 = calc_weight(s, group1, group2, m->data[0]);
     weight2 = calc_weight(s, group2, group1, m->data[0]);
+    weight2 += node_diff_group(s, group2, m->data[0]);
     
-    // TO CHECK: only return this?
-    *obji = (double)(m->incrvalue = (weight2-weight1));
+    *obji = (double)(m->incrvalue = -(weight2-weight1));
     return obji;
 }
 struct move *copyMove(struct move *dest, const struct move *src){
