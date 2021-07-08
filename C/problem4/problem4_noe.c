@@ -39,9 +39,9 @@ struct move *randomMove(struct move *m, const struct solution *s) {
     int n;
 
     n = s->n;
-    m->data[0] = randint(n-1);
 
     do{
+        m->data[0] = randint(n-1);
         m->data[1] = randint(n-1);
     }while(!is_valid_move(m, s));
 
