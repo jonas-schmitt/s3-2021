@@ -73,14 +73,23 @@ struct solution *allocSolution(struct problem *p) {
     // TODO: alloc memory for rndSample and initialize with nodes
     s->sampleLim = n-1;
     s->rndSample = (int *)malloc(n * sizeof(int));
+    s->sampleLimGroup = n-1;
+    s->rndSampleGroup = (int *)malloc(n * sizeof(int));
     for(int i = 0; i < n; ++i) {
         s->rndSample[i] = i;
+        s->rndSampleGroup[i] = i;
     }
     for(int i = n - 1; i > 0; --i) {
         int j = randint(i);
         int tmp = s->rndSample[j];
         s->rndSample[j] = s->rndSample[i];
         s->rndSample[i] = tmp;
+    }
+    for(int i = n - 1; i > 0; --i) {
+        int j = randint(i);
+        int tmp = s->rndSampleGroup[j];
+        s->rndSampleGroup[j] = s->rndSampleGroup[i];
+        s->rndSampleGroup[i] = tmp;
     }
     return s;
 }

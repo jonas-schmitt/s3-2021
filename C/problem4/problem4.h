@@ -70,7 +70,9 @@ struct solution {
     int n;
     double objvalue;
     int *rndSample;
+    int *rndSampleGroup;
     int sampleLim;
+    int sampleLimGroup;
 };
 
 struct move {
