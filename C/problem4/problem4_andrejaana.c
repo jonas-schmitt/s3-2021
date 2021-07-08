@@ -2,6 +2,7 @@
 // Created by jonas on 07.07.2021.
 //
 #include <string.h>
+#include <limits.h>
 #include "problem4.h"
 /* Solution generation */
 
@@ -13,9 +14,14 @@ struct solution *randomSolution(struct solution *s) {
     /* solution s must have been allocated with allocSolution() */
     int n = s->n;
     for(int i = 0; i < n; ++i) {
-        s->data[i] = randint(n-1);
+        rand_range = randint(n-1);
+        groupID = randint(tmp);
+        s->data[i] = groupID;
+        // assign vertices to groups
+        s->groups[groupID][s->group_sizes[groupID]] = solution->data[i];
+        s->group_sizes[groupID] += 1;
     }
-    // TODO assign vertices to groups
+    s->objvalue = getObjectiveValue(s);
     return s;
 }
 
@@ -28,9 +34,24 @@ struct solution *randomSolution(struct solution *s) {
  * Notes:
  *   Implements incremental evaluation for multiple moves
  */
-double *getObjectiveVector(double *objv, struct solution *s) {
-    //TODO
-    return NULL;
+double getObjectiveValue(struct solution *s) {
+    int n = s->n;
+    for(int i = 0; i < n; ++i) {
+        int groupObjVal = 0;
+        for(int j = 0; j < s->group_sizes[i]; ++j) {
+            for(int k = j+1; k < s->group_sizes[i]; ++k) {
+                if (j>k) {
+                    int tmp = j;
+                    j = k;
+                    k = tmp;
+                }
+                groupObjVal += s->prob->matrix[j*(s->n-1-j)+k-j];
+            }
+        }
+        s->objvalue += groupObjVal/2;
+
+    }
+    return s->objvalue;
 }
 
 /* Operations on solutions*/
@@ -38,7 +59,11 @@ struct solution *copySolution(struct solution *dest, const struct solution *src)
     dest->prob = src->prob;
     dest->n = src->n;
     memcpy(dest->data, src->data, src->n * sizeof (int));
-    // TODO copy group data
+    for(int i = 0; i < src->n; ++i) {
+        memcpy(dest->groups[i], src->groups[i], src->group_capacities[i] * sizeof (int));
+        dest->group_sizes[i] = src->group_sizes[i];
+        dest->group_capacities[i] = src->group_capacities[i];
+    }
     dest->objvalue = src->objvalue;
     return dest;
 }
