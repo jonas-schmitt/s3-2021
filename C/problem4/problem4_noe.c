@@ -115,7 +115,7 @@ static double calc_weight(struct solution *s, int group1, int group2, int node1)
 }
 
 double *getObjectiveIncrement(double *obji, struct move *m, struct solution *s) {
-    int i,j,group1,group2;
+    int group1,group2;
     double weight1, weight2;
 
     group1 = s->data[m->data[0]];
@@ -126,8 +126,8 @@ double *getObjectiveIncrement(double *obji, struct move *m, struct solution *s) 
        next it is calculated the weight after the move occurs
        the difference between both corresponds to the improvement/decrease of the obj function
     */
-    weight1 = calc_weight(s, group1, group2, i);
-    weight2 = calc_weight(s, group2, group1, i);
+    weight1 = calc_weight(s, group1, group2, m->data[0]);
+    weight2 = calc_weight(s, group2, group1, m->data[0]);
     
     // TO CHECK: only return this?
     *obji = (double)(m->incrvalue = (weight2-weight1));
