@@ -35,11 +35,14 @@ struct solution *randomSolution(struct solution *s) {
  *   Implements incremental evaluation for multiple moves
  */
 double getObjectiveValue(struct solution *s) {
+    // TODO I think this must be changed to getObjectiveVector, sorry for the confusion
+    // TODO check whether the objective has been already computed in the solution
     int n = s->n;
     for(int i = 0; i < n; ++i) {
         int groupObjVal = 0;
         for(int j = 0; j < s->group_sizes[i]; ++j) {
             for(int k = j+1; k < s->group_sizes[i]; ++k) {
+                // TODO You can just use the index_calc function in problem4.h instead of the code below
                 if (j>k) {
                     int tmp = j;
                     j = k;
