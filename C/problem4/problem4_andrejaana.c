@@ -52,7 +52,7 @@ double getObjectiveValue(struct solution *s) {
         s->objvalue += groupObjVal;
 
     }
-    return s->objvalue;
+    return -s->objvalue;
 }
 
 /* Operations on solutions*/
