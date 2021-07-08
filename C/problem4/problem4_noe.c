@@ -165,3 +165,8 @@ int getNeighbourhoodSize(struct solution *s){
 
     return n_groups;
 }
+
+double *getObjectiveVector(double *objv, struct solution *s){
+    *objv = (double)getObjectiveValue(s);
+    return objv;
+}
