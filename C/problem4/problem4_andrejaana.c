@@ -14,11 +14,11 @@ struct solution *randomSolution(struct solution *s) {
     /* solution s must have been allocated with allocSolution() */
     int n = s->n;
     for(int i = 0; i < n; ++i) {
-        rand_range = randint(n-1);
-        groupID = randint(tmp);
+        int rand_range = randint(n-1);
+        int groupID = randint(rand_range);
         s->data[i] = groupID;
         // assign vertices to groups
-        s->groups[groupID][s->group_sizes[groupID]] = solution->data[i];
+        s->groups[groupID][s->group_sizes[groupID]] = s->data[i];
         s->group_sizes[groupID] += 1;
     }
     s->objvalue = getObjectiveValue(s);
