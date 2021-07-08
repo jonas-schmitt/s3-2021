@@ -35,8 +35,9 @@ struct solution *randomSolution(struct solution *s) {
  *   Implements incremental evaluation for multiple moves
  */
 double getObjectiveValue(struct solution *s) {
+    int n = s->n;
     for(int i = 0; i < n; ++i) {
-        groupObjVal = 0
+        int groupObjVal = 0;
         for(int j = 0; j < s->group_sizes[i]; ++j) {
             for(int k = j+1; k < s->group_sizes[i]; ++k) {
                 if (j>k) {
@@ -47,10 +48,10 @@ double getObjectiveValue(struct solution *s) {
                 groupObjVal += s->prob->matrix[j*(s->n-1-j)+k-j];
             }
         }
-        s->objvalue = groupObjVal/2;
-        return s->objvalue;
+        s->objvalue += groupObjVal/2;
+
     }
-    return 0.0;
+    return s->objvalue;
 }
 
 /* Operations on solutions*/
@@ -58,7 +59,7 @@ struct solution *copySolution(struct solution *dest, const struct solution *src)
     dest->prob = src->prob;
     dest->n = src->n;
     memcpy(dest->data, src->data, src->n * sizeof (int));
-    for(int i = 0; i < n; ++i) {
+    for(int i = 0; i < src->n; ++i) {
         memcpy(dest->groups[i], src->groups[i], src->group_capacities[i] * sizeof (int));
         dest->group_sizes[i] = src->group_sizes[i];
         dest->group_capacities[i] = src->group_capacities[i];
