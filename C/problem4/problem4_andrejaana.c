@@ -41,11 +41,7 @@ double getObjectiveValue(struct solution *s) {
         double groupObjVal = 0;
         for(int j = 0; j < s->group_sizes[i]; ++j) {
             for(int k = j+1; k < s->group_sizes[i]; ++k) {
-                if(s->groups[i][j] < s->groups[i][k])
-                    index = index_calc(s->groups[i][j], s->groups[i][k], s->prob->n);
-                else
-                    index = index_calc(s->groups[i][k], s->groups[i][j], s->prob->n);
-                
+                index = index_calc(s->groups[i][j], s->groups[i][k], s->prob->n);
                 groupObjVal += s->prob->matrix[index];
             }
         }

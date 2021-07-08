@@ -21,18 +21,49 @@ static void init_matrix(double *matrix, int number_of_nodes) {
     }
 }
 
-//struct problem *newProblem(const char *filename) {
-struct problem *newProblem(int n) {
-    struct problem *p = NULL;
-    //TODO get number of vertices
-    if (n > 0) {
-        p = (struct problem *) malloc(sizeof (struct problem));
-        p->n = n;
-        int matrix_size = n*(n-1)/2;
-        p->matrix = (double *)malloc(matrix_size * sizeof(double));
-        init_matrix(p->matrix, n);
-    } else
+
+struct problem *newProblem(const char *filename) {
+//struct problem *newProblem(int n) {
+    FILE * fp;
+    char * line = NULL;
+    size_t len = 0;
+
+    fp = fopen(filename, "r");
+    if (fp == NULL) {
+        fprintf(stderr, "problem4: Invalid filename\n");
+        return NULL;
+    }
+    int n = 0;
+    if((getline(&line, &len, fp)) != -1) {
+        n = atoi(line);
+    }
+    if (n == 0) {
         fprintf(stderr, "problem4: Invalid number of vertices: %d\n", n);
+    }
+    struct problem *p = NULL;
+    p = (struct problem *) malloc(sizeof (struct problem));
+    p->n = n;
+    int matrix_size = n*(n-1)/2;
+    p->matrix = (double *)malloc(matrix_size * sizeof(double));
+    int i = 0;
+    while ((getline(&line, &len, fp)) != -1) {
+        //printf("%s", line);
+        char *token = strtok(line," ");
+        int j = i;
+        int value;
+        while(token!=NULL)
+        {
+            if(j > i && j < n) {
+                value = atoi(token);
+                int index = index_calc(i, j, n);
+                p->matrix[index] = (double)value;
+            }
+            token=strtok(NULL," ");
+            ++j;
+        }
+        ++i;
+    }
+    fclose(fp);
     return p;
 }
 

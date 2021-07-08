@@ -21,6 +21,6 @@
 
 #include "problem.h"
 
-//struct problem *newProblem(const char *filename);
-struct problem *newProblem(int n);
+struct problem *newProblem(const char *filename);
+//struct problem *newProblem(int n);
 double getObjectiveValue(struct solution *s);
