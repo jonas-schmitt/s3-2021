@@ -36,6 +36,7 @@ struct solution *randomSolution(struct solution *s) {
  */
 double getObjectiveValue(struct solution *s) {
     int n = s->n;
+    s->objvalue = 0.0;
     for(int i = 0; i < n; ++i) {
         double groupObjVal = 0;
         for(int j = 0; j < s->group_sizes[i]; ++j) {
