@@ -28,7 +28,7 @@ LIBS = -lgsl -lgslcblas -lm
 .PHONY: all clean debug
 
 # all: problem4-shd problem4-sga problem4-ils test
-all: problem4-shd problem4-sga test
+all: problem4-shd problem4-sga problem4-ils test
 
 clean:
 	rm -f *.o *~ core
