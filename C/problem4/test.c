@@ -33,6 +33,7 @@ int main(int argc, char **argv) {
     }
     struct solution *s = allocSolution(p);
     if (s != NULL) {
+        randomSolution(s);
         printSolution(s);
     }
     freeProblem(p);
