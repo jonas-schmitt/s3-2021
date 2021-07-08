@@ -68,7 +68,7 @@ struct solution {
     int *group_sizes;
     int *group_capacities;
     int n;
-    int objvalue;
+    double objvalue;
     int *rndSample;
     int sampleLim;
 };
